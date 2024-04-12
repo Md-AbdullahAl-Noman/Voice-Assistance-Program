@@ -1,10 +1,9 @@
 import os
 import pyttsx3 
 import speech_recognition as sr
-import webbrowser as browser
 import datetime
 import pyjokes
-import time
+import webbrowser
 
 def speech_to_text():
     recognizer = sr.Recognizer()
@@ -13,73 +12,65 @@ def speech_to_text():
             recognizer.adjust_for_ambient_noise(source)
             print("Listening for speech...")
             audio = recognizer.listen(source)
-            try:
-                print("Recognizing speech...")
-                text = recognizer.recognize_google(audio)
-                print("You said: " + text)
-                return text
-            except sr.UnknownValueError:
-                print("Could not understand audio")
-            except sr.RequestError:
-                print("Could not request results; check your network connection")
+            print("Recognizing speech...")
+            text = recognizer.recognize_google(audio)
+            print("You said: " + text)
+            return text.lower()
+    except sr.UnknownValueError:
+        print("Could not understand audio")
+    except sr.RequestError:
+        print("Could not request results; check your network connection")
     except OSError as e:
         print("No default input device available. Please check your microphone settings.")
         print("System Error Message:", e)
-
-
-# speechtotext()
+    return None
 
 def text_to_speech(x):
     engine = pyttsx3.init()
     voices = engine.getProperty('voices')
-    engine.setProperty('voice', voices[1].id)
+    engine.setProperty('voice', voices[0].id)
     rate=engine.getProperty('rate')
     engine.setProperty('rate', 120)
     engine.say(x)
     engine.runAndWait()
-# text_to_speech("Hello Noman welcome here")
-
 
 if __name__ == '__main__':
     
-    data=speech_to_text().lower()
-    
-    if "hello noman" in data :
-        while True:    
-                if "your name" in data:
-                        name = "my name is noman"
-                        text_to_speech(name)
-                elif "how old are you" in data:
-                    age="I just born for you now"
-                    text_to_speech(age)
-                    
-                elif "time" in data:
-                    time=datetime.datetime.now().strftime("%I:%M%p")
-                    text_to_speech(time)
-                elif "open youtube" in data:
-                    msg="Opening youtube for you"
-                    text_to_speech(msg)
-                    browser.open("https://www.youtube.com/")
-                    
-                elif "open github" in data:
-                    msg="Opening github for you"
-                    text_to_speech(msg)
-                    browser.open("https://github.com/Md-AbdullahAl-Noman")
-                elif "joke" in data:
-                    joke_to_speak=pyjokes.get_joke(language="en",category="neutral")
-                    text_to_speech(joke_to_speak)
-                elif "open google" in data:
-                    msg="Opening google for you"
-                    text_to_speech(msg)
-                    browser.open("https://www.google.com/")
-                elif "open microsoft store" in data:
-                    msg = "Opening Microsoft Store for you"
-                    text_to_speech(msg)
-                    os.system("start ms-windows-store:")
-                elif "exit" in data:
-                    speech_to_text("Thank you")
-                    break
-                time.sleep(8)
-        
-    else:
-        print("Thanks noman")
+    while True:
+        input_text = speech_to_text()
+        if input_text is not None:
+            if "hello noman" in input_text:
+                text_to_speech("Hello, how can I assist you?")
+                while True: 
+                    data = speech_to_text()
+                    if data:
+                        if "your name" in data:
+                            text_to_speech("My name is Noman")
+                        elif "how old are you" in data:
+                            text_to_speech("I just born for you now")
+                        elif "time" in data:
+                            time_now = datetime.datetime.now().strftime("%I:%M%p")
+                            text_to_speech("The current time is " + time_now)
+                        elif "open youtube" in data:
+                            text_to_speech("Opening youtube for you")
+                            webbrowser.open("https://www.youtube.com/")
+                        elif "open github" in data:
+                            text_to_speech("Opening github for you")
+                            webbrowser.open("https://github.com/Md-AbdullahAl-Noman")
+                        elif "joke" in data:
+                            joke = pyjokes.get_joke(language="en", category="neutral")
+                            text_to_speech(joke)
+                        elif "open google" in data:
+                            webbrowser.open( "https://www.google.com/")
+                            text_to_speech("Opening google for you")
+                            
+                        elif "open microsoft store" in data:
+                            text_to_speech("Opening Microsoft Store for you")
+                            webbrowser.open("ms-windows-store:")
+                        elif "exit" in data:
+                            text_to_speech("Thank you")
+                            break
+                    # time.sleep(5)
+            else:
+                print("Thanks Noman")
+                break
